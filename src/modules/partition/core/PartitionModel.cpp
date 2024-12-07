@@ -115,9 +115,15 @@ PartitionModel::parent( const QModelIndex& child ) const
     Partition* partition = partitionForIndex( child );
     if ( !partition )
     {
+        cWarning() << "Partition is null for the given index.";
         return QModelIndex();
     }
     PartitionNode* parentNode = partition->parent();
+    if ( !parentNode )
+    {
+        cWarning() << "Parent node is null!";
+        return QModelIndex();
+    }
     if ( parentNode == m_device->partitionTable() )
     {
         return QModelIndex();
