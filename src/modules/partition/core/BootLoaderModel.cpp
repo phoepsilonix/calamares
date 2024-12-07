@@ -42,6 +42,7 @@ BootLoaderModel::~BootLoaderModel() {}
 void
 BootLoaderModel::init( const QList< Device* >& devices )
 {
+    QMutexLocker lock( &m_lock );
     beginResetModel();
     blockSignals( true );
 
@@ -65,6 +66,7 @@ BootLoaderModel::createMbrItems()
 void
 BootLoaderModel::update()
 {
+    QMutexLocker lock( &m_lock );
     beginResetModel();
     blockSignals( true );
     updateInternal();
@@ -76,7 +78,7 @@ BootLoaderModel::update()
 void
 BootLoaderModel::updateInternal()
 {
-    QMutexLocker lock( &m_lock );
+    QMutexLocker lock( &m_lock_data );
     clear();
     createMbrItems();
 
@@ -135,7 +137,12 @@ BootLoaderModel::updateInternal()
 QVariant
 BootLoaderModel::data( const QModelIndex& index, int role ) const
 {
-    QMutexLocker lock( &m_lock );
+    QMutexLocker lock( &m_lock_data );
+
+    if (!index.isValid()) {
+        return QVariant();
+    }
+
     if ( role == Qt::DisplayRole )
     {
         QString displayRole = QStandardItemModel::data( index, Qt::DisplayRole ).toString();

@@ -58,6 +58,7 @@ public:
 private:
     DeviceList m_devices;
     mutable QMutex m_lock;
+    mutable QMutex m_lock_data;
 
     void createMbrItems();
     void updateInternal();
